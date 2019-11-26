@@ -26,7 +26,7 @@ public class GroupServer {
             this.ssc.configureBlocking(false);
             // 创建selector
             this.selector = Selector.open();
-            // 将select注册到channel（一个selector可以注册多个channel）
+            // 将channel注册到select（一个selector可以注册多个channel）
             this.ssc.register(selector, SelectionKey.OP_ACCEPT);
         } catch (IOException ex) {
             ex.printStackTrace();

@@ -27,7 +27,7 @@ public class GroupClient {
             this.sc.configureBlocking(false);
             // 初始化selector
             this.selector = Selector.open();
-            // 将selector注册到channel
+            // 将channel注册到selector
             this.sc.register(this.selector, SelectionKey.OP_READ);
             // 初始化用户名
             this.username = this.sc.getLocalAddress().toString().substring(1);

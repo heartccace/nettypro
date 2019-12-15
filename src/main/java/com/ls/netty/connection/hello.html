@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>长连接</title>
+</head>
+<script>
+    let socket;
+    if (window.WebSocket){
+        socket = new WebSocket("ws://localhost:8080/hello");
+        // 可以收到服务器会送的消息
+        socket.onmessage = function (ev) {
+            let rt = document.getElementById("response");
+            rt.value = rt.value + "\n" + ev.data;
+        }
+        socket.onopen = function(ev) {
+            let rt = document.getElementById("response");
+            rt.value = "连接开启...";
+        }
+        socket.onclose = function (ev) {
+            let rt = document.getElementById("response");
+            rt.value = rt.value + "\n" + "连接关闭...";
+        }
+    } else {
+        console.log("This browser does not support WebSocket.");
+    }
+    function send(message) {
+        if(!window.WebSocket) {
+            return;
+        }
+        if(socket.readyState == WebSocket.OPEN) {
+            socket.send(message);
+        }else {
+            alert("连接没有开始");
+        }
+    }
+</script>
+<body>
+    <form onsubmit="return false;">
+        <textarea name="message" style="height: 300px;width: 300px"></textarea>
+        <input type="button" onsubmit="" value="发送消息" onclick="send(this.form.message.value)">
+        <textarea id="response" style="height: 300px;width: 300px"></textarea>
+        <input type="button" onsubmit="" value="清空内容" onclick="document.getElementById('response').value = ''">
+    </form>
+</body>
+</html>

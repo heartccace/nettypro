@@ -1,4 +1,4 @@
-package com.ls.http;
+package com.ls.example.handler;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -10,12 +10,12 @@ import io.netty.util.CharsetUtil;
 import java.net.URI;
 
 /**
- *
- * HttpObject客户端和服务器通话信息封装对象
- * @author liushuang
- * @create 2019-12-02 20:22
+ * @author heartccace
+ * @create 2020-04-27 13:20
+ * @Description TODO
+ * @Version 1.0
  */
-public class HttpServerHandler extends SimpleChannelInboundHandler<HttpObject> {
+public class FirstHttpServerHandler extends SimpleChannelInboundHandler<HttpObject> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
         if(msg instanceof HttpRequest) {
@@ -27,12 +27,11 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<HttpObject> {
                 System.out.println("不对/favicon.ico请求做处理");
                 return;
             }
-
-            System.out.println("客户端地址为：" + ctx.channel().remoteAddress());
-            ByteBuf content = Unpooled.copiedBuffer("客户端你好，我是服务器", CharsetUtil.UTF_8);
-            DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,HttpResponseStatus.OK,content);
-            response.headers().set(HttpHeaderNames.CONTENT_TYPE,"text/plain; charset=utf-8");
-            response.headers().set(HttpHeaderNames.CONTENT_LENGTH,content.readableBytes());
+            System.out.println("请求方法名：" + request.method().name());
+            ByteBuf content = Unpooled.copiedBuffer("hello world", CharsetUtil.UTF_8);
+            FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,HttpResponseStatus.OK,content);
+            response.headers().set(HttpHeaderNames.CONTENT_TYPE,"text/plain")
+                    .set(HttpHeaderNames.CONTENT_LENGTH, content.readableBytes());
             ctx.writeAndFlush(response);
         }
     }

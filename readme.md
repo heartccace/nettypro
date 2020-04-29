@@ -1,3 +1,31 @@
+# Netty
+
+Netty是异步事件驱动的网络应用程序框架，用于快速开发可维护的高性能协议服务器和客户端。
+
+## Features
+
+### Design
+
+- 对于不同的传输类型统一API，阻塞或者非阻塞的socket
+- 基于灵活且可扩展的事件模型，可将关注点明确分离
+- 高度可定制的线程模型-单线程，一个或多个线程池，例如SEDA（staged event driven architecture）阶段性的事件驱动架构
+- 真正的无连接数据报套接字支持（从3.1开始）
+
+### performance
+
+- 高吞吐量，低延迟
+- 更少的资源消耗
+- 最小化内存拷贝
+
+### 核心组件
+
+```
+1、io.netty.channel.ChannelInitializer
+2、io.netty.channel.ChannelHandler
+```
+
+
+
 # 一、 线程模型
 
 ### 传统阻塞BIO模型

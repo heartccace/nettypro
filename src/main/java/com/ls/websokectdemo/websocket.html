@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>菜鸟教程(runoob.com)</title>
+
+    <script type="text/javascript">
+        let socket;
+        if(window.WebSocket) {
+            socket = new WebSocket("ws://localhost:8899/ws");
+
+            socket.onopen = (event) => {
+                let responseText = document.getElementById("responseText");
+                responseText.value = "连接开启...";
+            }
+
+            socket.onmessage = (event) => {
+                let responseText = document.getElementById("responseText");
+                responseText.value = responseText.value + "\n" + event.data;
+            }
+
+            socket.onclose = (event) => {
+                let responseText = document.getElementById("responseText");
+                responseText.value = responseText.value + "\n" + "连接关闭";
+            }
+        }
+        function send() {
+            let message = document.getElementById("send").value;
+            socket.send(message);
+            document.getElementById("send").value = "";
+        }
+    </script>
+
+</head>
+<body>
+
+<div id="sse">
+    <textarea id="send" rows="20" cols="40"></textarea>
+    <input type="button" value="提交" onclick="send()">
+</div>
+
+<div>
+    <textarea id="responseText" rows="20" cols="40"></textarea>
+</div>
+
+</body>
+</html>

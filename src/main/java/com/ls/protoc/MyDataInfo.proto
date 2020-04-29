@@ -1,0 +1,35 @@
+syntax = "proto2";
+package com.ls.protoc;
+option java_package = "com.ls.proto";
+option java_outer_classname = "MyDataInfo";
+// 使用oneof解决netty处理多种类型
+message MyMessage {
+    enum DataType {
+        PersonType = 1;
+        AnimalType = 2;
+        CatType = 3;
+    }
+
+    optional DataType data_type = 1;
+
+    oneof dataBody{
+        Person person = 2;
+        Animal animal = 3;
+        Cat cat = 4;
+    }
+}
+
+message Person {
+    required string name = 1;
+    optional int32 age = 2;
+}
+
+message Animal {
+    required string name = 1;
+    optional int32 age = 2;
+}
+
+message Cat {
+    required string name = 1;
+    optional int32 age = 2;
+}

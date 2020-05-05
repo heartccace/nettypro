@@ -28,6 +28,10 @@ Netty是异步事件驱动的网络应用程序框架，用于快速开发可维
 
 # 一、 线程模型
 
+### IO中流的分类 
+    根据字节分: 分为字节流和字符流
+    根据流类型分：输入流和输出流
+    根据功能：节点流和过滤流（对流进行过滤）
 ### 传统阻塞BIO模型
 
 ​		传统的网络编程IO模型采用的时阻塞IO，通常的处理方式是一个客户端在服务器端对应一个线程。
@@ -45,6 +49,67 @@ Netty是异步事件驱动的网络应用程序框架，用于快速开发可维
 NIO采用事件驱动模型。NIO通过selector进行事件注册，由selector轮询注册事件，当事件发生直接交由线程处理。一个线程对应一个selector，一个selector可以对应多个事件，一个selector可以处理多个channel，每个channel对应一个buffer。
 
 NIO基于IO多路复用模型：多个连接复用一个阻塞对象
+
+JAVA nio中拥有三个核心概念selector、channel、和Buffer，在nio中是面向块（block）或者缓冲区（buffer）编程的。buffer本身就是一块内存，底层实际上是个数组，数据的读写都是通过buffer来实现的。
+
+channel指的是可以向其写入数据或者是从中读取数据的对象。
+
+所有的数据读写都是通过buffer来进行的，永远不会出现直接向channel写入数据的情况，或者直接从channel读取数据的情况
+
+与strem不同的是，channel是双向的，一个流只能是inputstream或者outputstream
+
+
+
+```
+public class FileCopy {
+    private static final String commonPath = FileCopy.class.getResource("/").getPath();
+    private static final String inputFilePath = commonPath + "/input.txt";
+    private static final String outputFilePath = commonPath + "/output.txt";
+
+    public static void main(String[] args) throws Exception {
+        FileInputStream fis = new FileInputStream(inputFilePath);
+        FileOutputStream fos = new FileOutputStream(outputFilePath);
+        try{
+            FileChannel inChannel = fis.getChannel();
+            FileChannel outChannel = fos.getChannel();
+            ByteBuffer buffer = ByteBuffer.allocate(4);
+            while(true) {
+                buffer.clear();
+                int read = inChannel.read(buffer); //如果buffer中limit == position则无法继续读入
+                if(read != 0  ) {
+                    System.out.println(read);
+                }
+
+                if(read == -1) break;
+                buffer.flip();
+                outChannel.write(buffer);
+                // buffer.flip();
+            }
+        } finally {
+            fis.close();
+            fos.close();
+        }
+    }
+}
+```
+
+
+
+buffer的slice()方法会截取position 到limit的位置的buffer，该buffer与原来的buffer共享同一段数据，但是position、limit和capcity各自独立。
+
+
+
+#### seletor
+
+selector是一个可选channel对象的多路复用。selector可以通过Selector的open方法创建，该方法将使用系统默认的java.nio.channels.spi.SelectorProvider去创建一个新的selector。selector也可以通过调用自定义实现java.nio.channels.spi.SelectorProvider类的openSelector方法。selector可以通过调用colse方法进行关闭。
+
+一个可选择的channel是通过SelectionKey对象注册到selector。一个selector维护三种可选key的集合。
+
+- key set包含代表这当前channel注册到这个selector的所有key，通过keys()方法可以获得
+- selected-key代表当前感兴趣的key，是key set的子集，通过selectedKeys()获取。
+- cancelled-key 也是key set的一个子集，此时channel并没有取消注册
+
+在selector创建时，这三个key都是空的。
 
 ## Reactor模型
 
@@ -80,3 +145,25 @@ Handlers： 处理程序执行I/O事件要完成的实际事件，类似于客�
 ###### 主从Reactor多线程
 
 ​    
+
+### 字符编码
+
+ASCII 采用7个bit表示一个字符，共计128种字符
+
+ISO-8859-1采用8bit表示一个字符，共计256种
+
+GB2312 两个字节表示一个汉字
+
+GBK支持生僻字 是GB2312的父集
+
+gb10030支持所有的汉字
+
+big5台湾繁体
+
+unicode，采用两个字节表示一个字符（统一了编码）
+
+UTF，unicode translation format
+
+unicode是一种编码方式，而UTF则是一种存储方式，UTF-8是unicode的实现方式之一。
+
+BOM（byte order mark）: 

@@ -8,6 +8,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
+import java.lang.reflect.TypeVariable;
+
 /**
  * @author liushuang
  * @create 2019-11-27 23:21
